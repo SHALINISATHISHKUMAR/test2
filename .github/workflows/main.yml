@@ -1,0 +1,26 @@
+name: Manual Approval Deployment
+
+on:
+  workflow_dispatch:  # Manual trigger from the GitHub Actions UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build application
+        run: echo "Building the application..."
+
+  approve-and-deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: approval  # Must match the environment configured in repo settings
+    steps:
+      - name: Wait for manual approval
+        run: echo "Approved! Now deploying..."
+
+      - name: Deploy to production
+        run: echo "🚀 Deployment to production completed."
