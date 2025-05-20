@@ -1,0 +1,39 @@
+name: PMD Static Code Analysis
+
+on:
+  workflow_dispatch:  # Trigger manually via GitHub UI
+
+jobs:
+  static-code-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java (PMD requirement)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download and Extract PMD 7.13.0
+        run: |
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.13.0/pmd-dist-7.13.0-bin.zip
+          unzip pmd-dist-7.13.0-bin.zip
+          mv pmd-bin-7.13.0 pmd
+
+      - name: Run PMD analysis on Apex code
+        run: |
+          mkdir -p reports
+          ./pmd/bin/pmd check \
+            -d force-app/ \
+            -R ApexRules.xml \
+            -f summaryhtml \
+            -r reports/PMDReport.html || true
+
+      - name: Upload PMD Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pmd-report
+          path: reports/PMDReport.html
