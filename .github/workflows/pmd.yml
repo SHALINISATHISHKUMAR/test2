@@ -1,7 +1,9 @@
 name: PMD Static Code Analysis
 
 on:
-  workflow_dispatch:  # Trigger manually via GitHub UI
+  push:
+    branches:
+      - test  # Trigger manually via GitHub UI
 
 jobs:
   static-code-analysis:
